@@ -18,19 +18,19 @@ app.get("/api/status", (req, res) => res.send("Server running ✅"));
 app.use("/api", chatRoutes);
 
 
-// app.post("/api/symptom-check", async (req, res) => {
-//   try {
-//     const { symptoms } = req.body;
-//     if (!symptoms || !symptoms.trim()) {
-//       return res.status(400).json({ error: "Please provide symptom details." });
-//     }
+app.post("/api/symptom-check", async (req, res) => {
+  try {
+    const { symptoms } = req.body;
+    if (!symptoms || !symptoms.trim()) {
+      return res.status(400).json({ error: "Please provide symptom details." });
+    }
 
-//     const output = await getSymptomAnalysis(symptoms);
-//     res.json({ output });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "Server error." });
-//   }
-// });
+    const output = await getSymptomAnalysis(symptoms);
+    res.json({ output });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error." });
+  }
+});
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

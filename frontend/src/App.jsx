@@ -171,34 +171,24 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { parseAIResponse } from "./utils";
-import { Trash2, History } from "lucide-react"; // icons
+import { Trash2, History } from "lucide-react";
 
 function ChatMessage({ message }) {
   return (
-    <div
-      className={`my-2 flex ${
-        message.type === "user" ? "justify-end" : "justify-start"
-      }`}
-    >
-      <div
-        className={`max-w-[70%] p-4 rounded-2xl shadow-sm ${
-          message.type === "user"
-            ? "bg-teal-100 text-gray-800 rounded-tr-none"
-            : "bg-teal-100 text-gray-800 rounded-tl-none"
-        }`}
-      >
+    <div className={`my-2 flex ${message.type === "user" ? "justify-end" : "justify-start"}`}>
+      <div className={`max-w-[70%] p-4 rounded-2xl shadow-sm ${
+        message.type === "user"
+          ? "bg-teal-100 text-gray-800 rounded-tr-none"
+          : "bg-teal-100 text-gray-800 rounded-tl-none"
+      }`}>
         {message.type === "ai" ? (
           <>
             {message.parsed.conditions.length > 0 && (
               <div className="mb-3">
-                <strong className="text-teal-800 text-lg">
-                  PROBABLE CONDITIONS:
-                </strong>
+                <strong className="text-teal-800 text-lg">PROBABLE CONDITIONS:</strong>
                 {message.parsed.conditions.map((c, idx) => (
                   <div key={idx} className="mt-1">
-                    <span className="font-semibold underline text-teal-800">
-                      {idx + 1}. {c.title}:{" "}
-                    </span>
+                    <span className="font-semibold underline text-teal-800">{idx + 1}. {c.title}: </span>
                     <span>{c.description}</span>
                   </div>
                 ))}
@@ -207,14 +197,10 @@ function ChatMessage({ message }) {
             <hr />
             {message.parsed.steps.length > 0 && (
               <div className="mt-2">
-                <strong className="text-teal-800 text-lg">
-                  RECOMMENDED NEXT STEPS:
-                </strong>
+                <strong className="text-teal-800 text-lg">RECOMMENDED NEXT STEPS:</strong>
                 {message.parsed.steps.map((s, idx) => (
                   <div key={idx} className="mt-1">
-                    <span className="font-semibold underline text-teal-800">
-                      {idx + 1}. {s.title}:{" "}
-                    </span>
+                    <span className="font-semibold underline text-teal-800">{idx + 1}. {s.title}: </span>
                     <span>{s.description}</span>
                   </div>
                 ))}
@@ -238,48 +224,69 @@ export default function App() {
 
   const chatEndRef = useRef(null);
 
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // Scroll to bottom
+  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
-  // 🧠 Dummy fetch history (replace with backend later)
+  // Fetch chat history from backend
   useEffect(() => {
     if (sidebarOpen) {
-      setHistory([
-        { id: 1, user_query: "Fever and headache", ai_response: "Possible cold..." },
-        { id: 2, user_query: "Cough", ai_response: "Might be flu..." },
-      ]);
+      fetch("http://localhost:5000/api/history")
+        .then(res => res.json())
+        .then(data => setHistory(data))
+        .catch(err => console.error("Failed to fetch history:", err));
     }
   }, [sidebarOpen]);
 
-  // 🗑 Dummy delete handler (replace with backend later)
-  const handleDelete = (id) => {
-    setHistory((prev) => prev.filter((chat) => chat.id !== id));
+  // Delete chat
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`http://localhost:5000/api/history/${id}`, { method: "DELETE" });
+      setHistory(prev => prev.filter(chat => chat.id !== id));
+    } catch (err) {
+      console.error("Failed to delete chat:", err);
+    }
   };
 
+  // Clicking a history item opens the full response
+  const openHistoryChat = (chat) => {
+    const parsed = parseAIResponse(chat.ai_response);
+    setMessages([
+      { type: "user", text: chat.user_query },
+      { type: "ai", text: chat.ai_response, parsed }
+    ]);
+    setSidebarOpen(false);
+  };
+
+  // Submit new query
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
 
     const newUserMessage = { type: "user", text: input };
-    setMessages((prev) => [...prev, newUserMessage]);
+    setMessages(prev => [...prev, newUserMessage]);
     setLoading(true);
 
     try {
-      // Fake AI response (replace with real backend call later)
-      const fakeOutput = "This is a dummy AI response.";
-      const parsed = parseAIResponse(fakeOutput);
-      const newAIMessage = { type: "ai", text: fakeOutput, parsed };
-      setMessages((prev) => [...prev, newAIMessage]);
+      const res = await fetch("http://localhost:5000/api/symptom-check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ symptoms: input })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Server error");
 
-      // Add to local history
-      setHistory((prev) => [
-        { id: Date.now(), user_query: input, ai_response: fakeOutput },
-        ...prev,
-      ]);
+      const parsed = parseAIResponse(data.output);
+      const newAIMessage = { type: "ai", text: data.output, parsed };
+      setMessages(prev => [...prev, newAIMessage]);
+
+      // Refresh history from backend
+      const historyRes = await fetch("http://localhost:5000/api/history");
+      const historyData = await historyRes.json();
+      setHistory(historyData);
+
     } catch (err) {
       console.error(err);
-      alert("Error analyzing symptoms.");
+      alert(err.message);
     } finally {
       setLoading(false);
       setInput("");
@@ -291,90 +298,49 @@ export default function App() {
       {/* Header */}
       <header className="bg-teal-100 text-teal-700 shadow-md p-4 flex items-center justify-between">
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold text-teal-700">
-            Healthcare Symptom Checker
-          </h1>
-          <p className="text-slate-600 text-sm">
-            Get instant insights on possible health conditions.
-          </p>
+          <h1 className="text-2xl font-bold text-teal-700">Healthcare Symptom Checker</h1>
+          <p className="text-slate-600 text-sm">Get instant insights on possible health conditions.</p>
         </div>
-
-        {/* Sidebar Toggle Icon */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="text-teal-700 hover:text-teal-800"
-        >
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="cursor-pointer text-teal-700 hover:text-teal-800">
           <History size={28} />
         </button>
       </header>
 
       {/* Chat Window */}
       <div className="flex-1 overflow-y-auto p-6">
-        {messages.map((msg, idx) => (
-          <ChatMessage key={idx} message={msg} />
-        ))}
+        {messages.map((msg, idx) => <ChatMessage key={idx} message={msg} />)}
         <div ref={chatEndRef} />
       </div>
 
       {/* Input Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-4 flex items-center gap-3 border-t border-gray-200 shadow-inner"
-      >
+      <form onSubmit={handleSubmit} className="bg-white p-4 flex items-center gap-3 border-t border-gray-200 shadow-inner">
         <textarea
-          rows={1}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          rows={1} value={input} onChange={e => setInput(e.target.value)}
           placeholder="Describe your symptoms..."
           className="bg-teal-50 flex-1 resize-none p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-teal-300 text-gray-800"
         />
-        <button
-          type="submit"
-          disabled={loading}
-          className={`cursor-pointer px-6 py-3 rounded-xl font-semibold text-white shadow ${
-            loading
-              ? "bg-teal-400 cursor-not-allowed"
-              : "bg-teal-500 hover:bg-teal-600"
-          }`}
-        >
+        <button type="submit" disabled={loading} className={`cursor-pointer px-6 py-3 rounded-xl font-semibold text-white shadow ${loading ? "bg-teal-400 cursor-not-allowed" : "bg-teal-500 hover:bg-teal-600"}`}>
           {loading ? "Analyzing..." : "Analyze"}
         </button>
       </form>
 
       {/* Sidebar */}
-      <div
-        className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
-          sidebarOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
+      <div className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}>
         <div className="p-4 border-b flex justify-between items-center bg-teal-100">
           <h2 className="font-bold text-teal-700 text-lg">Chat History</h2>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="text-teal-700 text-xl font-bold"
-          >
-            ✕
-          </button>
+          <button onClick={() => setSidebarOpen(false)} className="cursor-pointer text-teal-700 text-xl font-bold">✕</button>
         </div>
         <div className="p-4 overflow-y-auto h-[90%]">
           {history.length === 0 ? (
             <p className="text-gray-500">No saved chats yet.</p>
           ) : (
-            history.map((chat) => (
-              <div
-                key={chat.id}
-                className="border-b pb-2 mb-3 flex justify-between items-start"
-              >
-                <div className="text-sm">
+            history.map(chat => (
+              <div key={chat.id} className="border-b pb-2 mb-3 flex justify-between items-start cursor-pointer">
+                <div className="text-sm flex-1" onClick={() => openHistoryChat(chat)}>
                   <p className="font-semibold text-teal-700">{chat.user_query}</p>
-                  <p className="text-gray-600 text-xs mt-1">
-                    {chat.ai_response.substring(0, 70)}...
-                  </p>
+                  <p className="text-gray-600 text-xs mt-1">{chat.ai_response.substring(0, 70)}...</p>
                 </div>
-                <button
-                  onClick={() => handleDelete(chat.id)}
-                  className="text-red-500 hover:text-red-700"
-                >
+                <button onClick={() => handleDelete(chat.id)} className="cursor-pointer text-red-500 hover:text-red-700">
                   <Trash2 size={16} />
                 </button>
               </div>

@@ -1,6 +1,6 @@
 # Healthcare Symptom Checker
 
-A web application that allows users to input their symptoms and receive probable health conditions along with recommended next steps. **Educational purposes only – not a medical diagnosis.**
+A web application that allows users to input their symptoms and receive probable health conditions along with recommended next steps. 
 
 ---
 

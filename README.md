@@ -1,3 +1,39 @@
+# Healthcare Symptom Checker
+
+A web application that allows users to input their symptoms and receive probable health conditions along with recommended next steps. **Educational purposes only – not a medical diagnosis.**
+
+---
+
+## 🔹 Objective
+- Input symptoms in natural language.
+- Output probable health conditions and recommended next steps.
+- Store queries and AI responses in a database for history.
+- Provide an interactive frontend with chat interface and sidebar for past queries.
+
+---
+
+## 🔹 Features
+- Real-time symptom analysis using **Google Gemini AI (LLM)**.
+- Probable conditions and safe educational recommendations.
+- Chat history sidebar with delete functionality.
+- Full frontend-backend separation.
+- MySQL database integration to store queries and AI responses.
+
+---
+
+## 🔹 Tools & Technologies Used
+| Layer          | Tools / Libraries                                 |
+|----------------|--------------------------------------------------|
+| Frontend       | React, Tailwind CSS, Lucide-React (icons)       |
+| Backend        | Node.js, Express.js                              |
+| Database       | MySQL                                            |
+| LLM / AI       | Google Gemini AI (gemini-2.5-flash-lite model)  |
+| Others         | dotenv, cors, mysql2                              |
+
+---
+
+## 🔹 Folder & File Structure
+
 
 ---
 

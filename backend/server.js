@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/status", (req, res) => res.send("Server running ✅"));
+app.get("/api/status", (req, res) => res.send("Server running"));
 
 app.use("/api", chatRoutes);
 

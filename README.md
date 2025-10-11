@@ -34,49 +34,93 @@ A web application that allows users to input their symptoms and receive probable
 
 
 
-## 🔹 Backend Details
+## Backend Details
 
-### **server.js**
-- Starts the server on specified port.
-- Configures middleware: `cors`, `express.json()`.
-- Defines a test route: `/api/status`.
-- Uses `chat.js` for all API endpoints under `/api`.
+The backend is built using **Node.js** and **Express**, handling API requests, LLM integration, and database storage.
 
-### **db.js**
-- Connects to MySQL database using `mysql2`.
-- Uses connection pool and promise-based queries.
-- Logs success or failure of database connection.
+### server.js
+- Entry point of the backend application.
+- Sets up the Express server, middleware, and routes.
+- Routes included:
+  - `/api/status` → simple health check endpoint.
+  - `/api/symptom-check` → accepts symptom text from the user and returns AI analysis.
+  - `/api/history` → fetches all chat history.
+- Uses `cors` and `express.json()` for handling requests.
+- Environment variables are loaded via `.env`.
 
-### **geminiClient.js**
-- Calls **Google Gemini AI** with a structured prompt:
-  - Suggests 3–5 probable conditions based on symptoms.
-  - Provides 5–6 educational recommended steps.
-  - Includes a disclaimer: “For educational purposes only.”
-- Returns AI-generated text.
+### db.js
+- Handles **MySQL database connection** using `mysql2`.
+- Configures a connection pool for efficient queries.
+- Connects to the `healthcare_db` database.
+- Exports a promise-based interface for async database queries.
 
-### **routes/chat.js**
-- **GET /api/history** – Fetch all past queries and responses.
-- **POST /api/symptom-check** – Analyze symptoms, save result in DB.
-- **DELETE /api/history/:id** – Delete a specific history entry by ID.
+### routes/chat.js
+- Contains **API routes** for chat operations:
+  1. `GET /history` → fetch all previous chats from the database.
+  2. `DELETE /history/:id` → delete a chat entry by ID.
+  3. `POST /symptom-check` → send user symptoms to the LLM and save AI output to the database.
+
+- Handles errors gracefully and responds with appropriate HTTP status codes.
+
+### gemini/geminiClient.js
+- Integrates with **Google Gemini API** (LLM) for AI symptom analysis.
+- Exports `getSymptomAnalysis(symptoms)` function:
+  - Sends a **carefully crafted prompt** to the LLM including instructions to:
+    - Suggest 3–5 probable health conditions.
+    - Provide recommended next steps (self-care, monitoring, urgent care advice).
+    - Include a mandatory educational disclaimer.
+  - Returns structured text output from the LLM.
+- Uses `GoogleGenerativeAI` SDK and `gemini-2.5-flash-lite` model.
+
+### Key Functions:
+- `getSymptomAnalysis(symptoms)` → Sends symptom text to LLM and receives structured output.
+- Database queries in `chat.js`:
+  - `INSERT INTO chat_history (user_query, ai_response)` → stores new queries.
+  - `SELECT * FROM chat_history ORDER BY id DESC` → fetches chat history.
+  - `DELETE FROM chat_history WHERE id = ?` → deletes a chat entry.
 
 ---
 
-## 🔹 Frontend Details
+## Frontend Details
 
-### **App.jsx**
-- Chat interface with:
-  - Input box for symptoms.
-  - Dynamic chat messages (user & AI).
-- Sidebar for viewing **history of queries**:
-  - Shows truncated AI response by default.
-  - Delete button to remove entries.
-  - Click to expand full AI response.
-- Fetches backend APIs to save and retrieve chat history (replace dummy data in dev).
+### App.jsx
 
-### **utils.js**
-- `parseAIResponse(response)`:
-  - Splits AI response into **conditions** and **recommended steps**.
-  - Converts text to structured JSON for rendering in frontend.
+This is the main React component that handles the **chat interface**, **user input**, **AI responses**, and the **chat history sidebar**.  
+
+**Key Features:**
+
+1. **Chat Interface:**
+   - Displays user and AI messages in a conversational format.
+   - AI messages are structured into:
+     - **Probable Conditions**
+     - **Recommended Next Steps**
+   - Styled using Tailwind CSS for clarity and readability.
+   - Chat messages dynamically scroll to the latest message using `useRef`.
+
+2. **Input Box for Symptoms:**
+   - Multi-line textarea for users to type their symptoms.
+   - Submits input to the backend API `/api/symptom-check`.
+   - Disabled while AI response is loading to prevent multiple submissions.
+
+3. **Sidebar for Chat History:**
+   - Opens from the right using a toggle button.
+   - Fetches **chat history** from the backend `/api/history`.
+   - Displays a **truncated preview** (first 70 characters) of AI responses.
+   - Clicking a history entry opens the **full AI response** in the chat window.
+   - Each entry has a **delete button** to remove it from the database.
+
+4. **Loading & Error Handling:**
+   - Shows `Analyzing...` while backend is processing the request.
+   - Alerts the user if the request fails or there’s a server error.
+
+### utils.js
+
+Contains helper function `parseAIResponse(response)`:
+
+- Splits AI response into **conditions** and **recommended steps**.
+- Converts the raw text from LLM into structured JSON format.
+- Used by App.jsx to render AI messages clearly in the frontend.
+
 
 ---
 

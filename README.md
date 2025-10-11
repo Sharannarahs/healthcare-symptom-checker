@@ -33,7 +33,24 @@ A web application that allows users to input their symptoms and receive probable
 ---
 
 ## 🔹 Folder & File Structure
-
+healthcare-symptom-checker/
+│
+├─ backend/
+│ ├─ server.js # Main server
+│ ├─ db.js # MySQL database connection
+│ ├─ gemini/
+│ │ └─ geminiClient.js # LLM API call and prompt setup
+│ ├─ routes/
+│ │ └─ chat.js # API routes: /symptom-check, /history, DELETE
+│ └─ .env # Environment variables (API keys, DB credentials)
+│
+├─ frontend/
+│ ├─ src/
+│ │ ├─ App.jsx # Main React component (UI + chat + sidebar)
+│ │ └─ utils.js # Helper function to parse AI responses
+│ └─ package.json
+│
+└─ README.md
 
 ---
 

@@ -92,3 +92,14 @@ CREATE TABLE IF NOT EXISTS chat_history (
   ai_response LONGTEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+---
+
+### **Output Screenshots**
+
+1) Symptoms queries by user and LLM generating probable conditions:
+<img width="959" height="533" alt="A" src="https://github.com/user-attachments/assets/8d0b67ae-ef8e-4871-b05b-a35cddfa81ab" />
+
+2) LLM generating recommended steps along with disclaimer:
+<img width="959" height="505" alt="B" src="https://github.com/user-attachments/assets/982b45a9-7542-4d0d-aa70-d9dd95df8177" />
+

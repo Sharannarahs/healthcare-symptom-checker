@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { parseAIResponse } from "./utils";
 import { Trash2, History } from "lucide-react";
+import { Hospital } from "lucide-react";
+
 
 function ChatMessage({ message }) {
   return (
@@ -126,9 +128,15 @@ export default function App() {
     <div className="flex flex-col h-screen bg-teal-50 relative">
       {/* Header */}
       <header className="bg-teal-100 text-teal-700 shadow-md p-4 flex items-center justify-between">
+        
         <div className="flex flex-col">
-          <h1 className="text-2xl font-bold text-teal-700">Healthcare Symptom Checker</h1>
-          <p className="text-slate-600 text-sm">Get instant insights on possible health conditions.</p>
+          <h1 className="text-2xl font-bold text-teal-700 flex items-center gap-2">
+            <Hospital className="w-7 h-7 text-teal-700" />
+            Healthcare Symptom Checker
+          </h1>
+          <p className="text-slate-600 pl-9 text-sm">
+            Get instant insights on possible health conditions.
+          </p>
         </div>
         <button onClick={() => setSidebarOpen(!sidebarOpen)} className="cursor-pointer text-teal-700 hover:text-teal-800">
           <History size={28} />

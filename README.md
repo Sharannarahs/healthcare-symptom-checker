@@ -80,6 +80,24 @@ A web application that allows users to input their symptoms and receive probable
 
 ---
 
+### **Output Screenshots**
+1) Symptoms queries by user and LLM generating probable conditions:
+<img width="959" height="533" alt="A" src="https://github.com/user-attachments/assets/8d0b67ae-ef8e-4871-b05b-a35cddfa81ab" />
+
+2) LLM generating recommended steps along with disclaimer:
+<img width="959" height="505" alt="B" src="https://github.com/user-attachments/assets/982b45a9-7542-4d0d-aa70-d9dd95df8177" />
+
+3) Chat history showing users querisand the LLM generated responses.
+<img width="959" height="503" alt="C" src="https://github.com/user-attachments/assets/5c009207-c061-4739-b83b-d840ace19b14" />
+
+4) On clicking delete icon, the queries and responses are deleted.
+<img width="958" height="505" alt="D" src="https://github.com/user-attachments/assets/9d9946fe-1261-4f8b-b6c6-fb7c001da0b1" />
+
+5) On clicking the history, it opens the generated responses.
+<img width="959" height="503" alt="image" src="https://github.com/user-attachments/assets/02b11354-d913-4500-95fc-f082b32c2470" />
+
+---
+
 ## 🔹 Database Schema
 
 ```sql
@@ -93,13 +111,8 @@ CREATE TABLE IF NOT EXISTS chat_history (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
----
 
-### **Output Screenshots**
 
-1) Symptoms queries by user and LLM generating probable conditions:
-<img width="959" height="533" alt="A" src="https://github.com/user-attachments/assets/8d0b67ae-ef8e-4871-b05b-a35cddfa81ab" />
 
-2) LLM generating recommended steps along with disclaimer:
-<img width="959" height="505" alt="B" src="https://github.com/user-attachments/assets/982b45a9-7542-4d0d-aa70-d9dd95df8177" />
+
 

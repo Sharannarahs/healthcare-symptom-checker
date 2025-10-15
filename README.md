@@ -140,6 +140,7 @@ Contains helper function `parseAIResponse(response)`:
 5) On clicking the history, it opens the generated responses.
 <img width="959" height="503" alt="image" src="https://github.com/user-attachments/assets/02b11354-d913-4500-95fc-f082b32c2470" />
 
+
 ---
 
 ## 🔹 Database Schema

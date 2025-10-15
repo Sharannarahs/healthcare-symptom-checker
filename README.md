@@ -145,11 +145,11 @@ Contains helper function `parseAIResponse(response)`:
 
 ## 🎥 Demo Video
 
-<video width="720" height="480" controls autoplay loop muted>
-  <source src="Healthcare Sympton Checker Demo Video.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
 
+
+Watch the full walkthrough of the **Healthcare Symptom Checker** in action below:
+
+👉 [Click here to view the demo video](./Healthcare%20Sympton%20Checker%20Demo%20Video.mp4)
 
 ---
 

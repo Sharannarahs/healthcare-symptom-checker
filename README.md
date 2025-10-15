@@ -140,6 +140,17 @@ Contains helper function `parseAIResponse(response)`:
 5) On clicking the history, it opens the generated responses.
 <img width="959" height="503" alt="image" src="https://github.com/user-attachments/assets/02b11354-d913-4500-95fc-f082b32c2470" />
 
+
+---
+
+## 🎥 Demo Video
+
+<video width="720" height="480" controls autoplay loop muted>
+  <source src="Healthcare Sympton Checker Demo Video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+
 ---
 
 ## 🔹 Database Schema

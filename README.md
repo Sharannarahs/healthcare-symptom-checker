@@ -143,16 +143,6 @@ Contains helper function `parseAIResponse(response)`:
 
 ---
 
-## 🎥 Demo Video
-
-
-
-Watch the full walkthrough of the **Healthcare Symptom Checker** in action below:
-
-👉 [Click here to view the demo video](./Healthcare%20Sympton%20Checker%20Demo%20Video.mp4)
-
----
-
 ## 🔹 Database Schema
 
 ```sql

@@ -19,4 +19,4 @@ db.getConnection((err, connection) => {
   }
 });
 
-export default db.promise(); // for promise-based queries
+export default db.promise(); 

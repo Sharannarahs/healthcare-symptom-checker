@@ -55,7 +55,6 @@ export default function App() {
 
   const chatEndRef = useRef(null);
 
-  // Scroll to bottom
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 
   // Fetch chat history from backend
@@ -126,7 +125,6 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen bg-teal-50 relative">
-      {/* Header */}
       <header className="bg-teal-100 text-teal-700 shadow-md p-4 flex items-center justify-between">
         
         <div className="flex flex-col">
@@ -143,13 +141,11 @@ export default function App() {
         </button>
       </header>
 
-      {/* Chat Window */}
       <div className="flex-1 overflow-y-auto p-6">
         {messages.map((msg, idx) => <ChatMessage key={idx} message={msg} />)}
         <div ref={chatEndRef} />
       </div>
 
-      {/* Input Form */}
       <form onSubmit={handleSubmit} className="bg-white p-4 flex items-center gap-3 border-t border-gray-200 shadow-inner">
         <textarea
           rows={1} value={input} onChange={e => setInput(e.target.value)}
@@ -161,7 +157,6 @@ export default function App() {
         </button>
       </form>
 
-      {/* Sidebar */}
       <div className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}>
         <div className="p-4 border-b flex justify-between items-center bg-teal-100">
           <h2 className="font-bold text-teal-700 text-lg">Chat History</h2>
